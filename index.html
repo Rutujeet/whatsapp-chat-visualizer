@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WhatsApp Chat Viewer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>WhatsApp Chat Viewer</h1>
+      </div>
+
+      <div id="upload-container" class="upload-container">
+        <svg
+          class="upload-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+          />
+        </svg>
+        <p class="text-lg mb-2">Drop your WhatsApp chat .txt file here</p>
+        <p class="text-sm text-gray-400">or click to browse</p>
+      </div>
+
+      <input type="file" id="file-upload" accept=".txt" />
+      <div id="chat-container" class="chat-container"></div>
+      <button id="new-upload-btn" class="new-upload-btn">
+        Upload New File
+      </button>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
