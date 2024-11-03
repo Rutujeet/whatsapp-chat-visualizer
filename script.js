@@ -2,6 +2,27 @@ const uploadContainer = document.getElementById("upload-container");
 const fileUpload = document.getElementById("file-upload");
 const chatContainer = document.getElementById("chat-container");
 const newUploadBtn = document.getElementById("new-upload-btn");
+const errorMessage = document.getElementById("error-message");
+
+function showError() {
+  uploadContainer.classList.add("error");
+  errorMessage.classList.add("visible");
+
+  // Remove error state after animation
+  setTimeout(() => {
+    uploadContainer.classList.remove("error");
+    setTimeout(() => {
+      errorMessage.classList.remove("visible");
+    }, 3000);
+  }, 500);
+}
+
+function isValidWhatsAppFormat(text) {
+  const messagePattern =
+    /^\[\d{2}\/\d{2}\/\d{2},\s\d{1,2}:\d{2}:\d{2}\s[AP]M\]\s.+?:/m;
+  const firstLines = text.split("\n").slice(0, 3).join("\n");
+  return messagePattern.test(firstLines);
+}
 
 function formatContent(content) {
   const lines = content.split("\n");
@@ -10,11 +31,18 @@ function formatContent(content) {
 }
 
 function parseMessages(text) {
+  if (!isValidWhatsAppFormat(text)) {
+    throw new Error("Invalid WhatsApp chat format");
+  }
+
   const messagePattern =
     /\[(.+?)\] (.+?): ([\s\S]+?)(?=\[\d{2}\/\d{2}\/\d{2}|$)/g;
   const matches = Array.from(text.matchAll(messagePattern));
 
-  // Skip first message (encryption notice)
+  if (matches.length === 0) {
+    throw new Error("No valid messages found");
+  }
+
   return matches.slice(1).map((match, index) => {
     const [, datetime, sender, content] = match;
     return {
@@ -65,13 +93,17 @@ function displayMessages(messages) {
 function handleFile(file) {
   const reader = new FileReader();
   reader.onload = (e) => {
-    const text = e.target.result;
-    const messages = parseMessages(text);
-    displayMessages(messages);
+    try {
+      const text = e.target.result;
+      const messages = parseMessages(text);
+      displayMessages(messages);
 
-    uploadContainer.style.display = "none";
-    chatContainer.style.display = "block";
-    newUploadBtn.style.display = "block";
+      uploadContainer.style.display = "none";
+      chatContainer.style.display = "block";
+      newUploadBtn.style.display = "block";
+    } catch (error) {
+      showError();
+    }
   };
   reader.readAsText(file);
 }
@@ -90,20 +122,26 @@ uploadContainer.addEventListener("drop", (e) => {
   e.preventDefault();
   uploadContainer.classList.remove("drag-over");
   const file = e.dataTransfer.files[0];
-  if (file) handleFile(file);
+  if (file && file.name.endsWith(".txt")) {
+    handleFile(file);
+  } else {
+    showError();
+  }
 });
 
-// Click to upload
 uploadContainer.addEventListener("click", () => {
   fileUpload.click();
 });
 
 fileUpload.addEventListener("change", (e) => {
   const file = e.target.files[0];
-  if (file) handleFile(file);
+  if (file && file.name.endsWith(".txt")) {
+    handleFile(file);
+  } else {
+    showError();
+  }
 });
 
-// New upload button
 newUploadBtn.addEventListener("click", () => {
   uploadContainer.style.display = "block";
   chatContainer.style.display = "none";
