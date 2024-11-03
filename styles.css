@@ -35,11 +35,49 @@ body {
   cursor: pointer;
   margin-top: 1rem;
   transition: all 0.3s ease;
+  position: relative;
 }
 
 .upload-container.drag-over {
   border-color: #10b981;
   background-color: rgba(16, 185, 129, 0.1);
+}
+
+.upload-container.error {
+  border-color: #ef4444;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-8px);
+  }
+  75% {
+    transform: translateX(8px);
+  }
+}
+
+.error-message {
+  position: absolute;
+  top: -40px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #ef4444;
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  white-space: nowrap;
+}
+
+.error-message.visible {
+  opacity: 1;
 }
 
 .upload-icon {
